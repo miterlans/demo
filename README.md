@@ -22,3 +22,11 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+#### select
+- default-value
+- change事件
+- 模糊搜索 
+#### option
+- value
+- label
