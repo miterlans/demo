@@ -1,4 +1,4 @@
-<!--<template>
+<template>
   <div class="select">
     <input class="input" ref="input" type="text" v-model="search" @focus="handleFocus" />
     <div :class="['dropdown', { show: isShowDropdown }]">
@@ -6,7 +6,6 @@
     </div>
   </div>
 </template>
--->
 
 <script>
 export default {
@@ -29,15 +28,28 @@ export default {
       search: ''
     }
   },
-  // watch: {
-  //   search: {
-  //     handler(n, o) {
-  //       console.log(n, o)
-  //       if (n !== o) {
-  //       }
-  //     }
-  //   }
-  // },
+  watch: {
+    search: {
+      handler(n, o) {
+        if (n !== o) {
+          if (n === '') {
+            this.$children.forEach(child => {
+              child.$el.classList.remove('hide')
+            })
+          } else {
+            this.$children.forEach(child => {
+              const { label } = child
+              if (label.includes(n)) {
+                child.$el.classList.remove('hide')
+              } else {
+                child.$el.classList.add('hide')
+              }
+            })
+          }
+        }
+      }
+    }
+  },
   mounted() {
     if (this.defaultValue) {
       let selectItem = this.$children.find(item => item.value === this.defaultValue)
@@ -62,52 +74,7 @@ export default {
       this.$emit('change', value)
       this.$refs.input.blur()
       this.handleBlur()
-    },
-    handleRenderOptions() {
-      console.log('handleRenderOptions')
-      let search = this.search
-      if (search === '') {
-        return [...this.$slots.default]
-      } else {
-        return this.$slots.default.filter(child => {
-          const { componentOptions } = child
-          const [textVnode] = componentOptions.children
-          console.log(textVnode)
-          debugger
-          return textVnode.text.includes(search)
-        })
-      }
     }
-  },
-  render(h) {
-    console.log('children', h)
-    let options = this.handleRenderOptions()
-    console.log('options', options)
-    return (
-      <div class="select">
-        <input
-          class="input"
-          ref="input"
-          type="text"
-          {...{
-            on: {
-              focus: this.handleFocus,
-              input: v => (this.search = v)
-            },
-            props: {
-              value: this.search
-            }
-          }}
-        />
-        <div
-          {...{
-            class: ['dropdown', { show: this.isShowDropdown }]
-          }}
-        >
-          {options}
-        </div>
-      </div>
-    )
   }
 }
 </script>
